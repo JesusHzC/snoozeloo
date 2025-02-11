@@ -94,8 +94,7 @@ fun AlarmCard(
            }
            Box(
                modifier = Modifier
-                   .weight(1f)
-                   .fillMaxWidth(),
+                   .weight(1f),
                contentAlignment = Alignment.TopEnd
            ) {
                Switch(
