@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.ui.theme
+package com.jesushz.snoozeloo.presentation.theme
 
 import androidx.compose.ui.graphics.Color
 
