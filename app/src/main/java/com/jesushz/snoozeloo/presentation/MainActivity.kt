@@ -4,15 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navigation
+import com.jesushz.snoozeloo.presentation.components.Route
+import com.jesushz.snoozeloo.presentation.my_alarms.MyAlarmsScreenRoot
 import com.jesushz.snoozeloo.presentation.theme.SnoozelooTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,7 +21,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         var showSplashScreen = true
         lifecycleScope.launch {
-            delay(2000L)
+            delay(1000L)
             showSplashScreen = false
         }
         installSplashScreen().apply {
@@ -33,29 +32,20 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             SnoozelooTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                val navController = rememberNavController()
+                NavHost(
+                    navController = navController,
+                    startDestination = Route.SnoozeGraph
+                ) {
+                    navigation<Route.SnoozeGraph>(
+                        startDestination = Route.MyAlarms
+                    ) {
+                        composable<Route.MyAlarms> {
+                            MyAlarmsScreenRoot()
+                        }
+                    }
                 }
             }
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    SnoozelooTheme {
-        Greeting("Android")
     }
 }
