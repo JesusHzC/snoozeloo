@@ -3,4 +3,6 @@
     <string name="your_alarms">Your Alarms</string>
     <string name="new_alarm">New alarm</string>
     <string name="no_alarms">It\'s empty! Add the first alarm so you\ndon\'t miss an important moment!</string>
+    <string name="save">Save</string>
+    <string name="close">Close</string>
 </resources>

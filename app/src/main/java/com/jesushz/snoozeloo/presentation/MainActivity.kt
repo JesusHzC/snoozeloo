@@ -12,6 +12,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
 import com.jesushz.snoozeloo.presentation.components.Route
 import com.jesushz.snoozeloo.presentation.my_alarms.MyAlarmsScreenRoot
+import com.jesushz.snoozeloo.presentation.setting_alarm.SettingAlarmScreenRoot
 import com.jesushz.snoozeloo.presentation.theme.SnoozelooTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -38,10 +39,14 @@ class MainActivity : ComponentActivity() {
                     startDestination = Route.SnoozeGraph
                 ) {
                     navigation<Route.SnoozeGraph>(
-                        startDestination = Route.MyAlarms
+                        startDestination = Route.SettingAlarm
                     ) {
                         composable<Route.MyAlarms> {
                             MyAlarmsScreenRoot()
+                        }
+
+                        composable<Route.SettingAlarm> {
+                            SettingAlarmScreenRoot()
                         }
                     }
                 }

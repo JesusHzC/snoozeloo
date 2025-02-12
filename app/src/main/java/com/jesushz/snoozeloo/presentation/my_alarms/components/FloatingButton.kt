@@ -37,7 +37,7 @@ fun FloatingButton(
 
 @Preview(showBackground = true)
 @Composable
-fun FloatingButtonPreview() {
+private fun FloatingButtonPreview() {
     MaterialTheme {
         FloatingButton(
             onButtonClick = {}

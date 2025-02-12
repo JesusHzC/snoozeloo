@@ -12,3 +12,5 @@ val Primary = Color(0xFF4664FF)
 val OnPrimary = Color(0xFFFFFFFF)
 val LightGray = Color(0xFF858585)
 val Secondary = Color(0xFFBCC6FF)
+
+val DisableButton = Color(0xFFE6E6E6)

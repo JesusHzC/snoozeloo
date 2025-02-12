@@ -10,4 +10,7 @@ sealed interface Route {
     @Serializable
     data object MyAlarms : Route
 
+    @Serializable
+    data object SettingAlarm : Route
+
 }

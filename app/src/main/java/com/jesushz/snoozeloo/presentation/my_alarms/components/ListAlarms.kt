@@ -3,8 +3,10 @@ package com.jesushz.snoozeloo.presentation.my_alarms.components
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -22,5 +24,15 @@ fun ListAlarms(
         ) { alarm ->
             AlarmCard()
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun ListAlarmsPreview() {
+    MaterialTheme {
+        ListAlarms(
+            alarms = (1..20).map { it.toString() }
+        )
     }
 }
