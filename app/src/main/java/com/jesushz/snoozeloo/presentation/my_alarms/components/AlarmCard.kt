@@ -15,15 +15,22 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -35,6 +42,7 @@ import com.jesushz.snoozeloo.core.presentation.components.ContentCard
 import com.jesushz.snoozeloo.core.presentation.components.DayCard
 import com.jesushz.snoozeloo.core.presentation.theme.LightGray
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
+import kotlin.math.min
 
 @Composable
 fun AlarmCard(
@@ -127,13 +135,23 @@ fun AlarmCard(
                }
            }
            Spacer(modifier = Modifier.height(8.dp))
-           FlowRow(
+           var maxWidth by remember {
+               mutableIntStateOf(0)
+           }
+           val maxWidthDp = with(LocalDensity.current) { maxWidth.toDp() }
+           FlowRow (
                modifier = Modifier
                    .fillMaxWidth(),
-               horizontalArrangement = Arrangement.spacedBy(4.dp)
+               horizontalArrangement = Arrangement.spacedBy(2.dp),
            ) {
                repeat(7) {
                    DayCard(
+                       modifier = Modifier
+                           .weight(1f)
+                           .width(maxWidthDp)
+                           .onSizeChanged {
+                               maxWidth = min(maxWidth, it.width)
+                           },
                        isActivated = false,
                        onDayClick = {}
                    ) {
