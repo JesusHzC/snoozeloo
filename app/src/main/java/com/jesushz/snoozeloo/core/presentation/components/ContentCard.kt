@@ -23,6 +23,21 @@ fun ContentCard(
     )
 }
 
+@Composable
+fun ContentCard(
+    modifier: Modifier = Modifier,
+    onCardClick: () -> Unit,
+    content: @Composable () -> Unit
+) {
+    Surface(
+        modifier = modifier,
+        color = Color.White,
+        shape = RoundedCornerShape(10),
+        onClick = onCardClick,
+        content = content
+    )
+}
+
 @Preview
 @Composable
 private fun ContentCardPreview() {

@@ -336,7 +336,7 @@ private fun ActionButtons(modifier: Modifier = Modifier) {
         CloseButton(
             modifier = Modifier
                 .size(35.dp),
-            onBackClick = {}
+            onCloseClick = {}
         )
         SaveButton(
             isEnabled = true,
