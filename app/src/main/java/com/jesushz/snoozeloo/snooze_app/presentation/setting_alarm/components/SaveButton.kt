@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm.components
+package com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.shape.RoundedCornerShape

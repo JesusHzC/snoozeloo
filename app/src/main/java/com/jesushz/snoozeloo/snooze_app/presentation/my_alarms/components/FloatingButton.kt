@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components
+package com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape

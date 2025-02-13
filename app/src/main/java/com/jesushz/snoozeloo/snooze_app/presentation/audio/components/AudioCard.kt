@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.audio.components
+package com.jesushz.snoozeloo.snooze_app.presentation.audio.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

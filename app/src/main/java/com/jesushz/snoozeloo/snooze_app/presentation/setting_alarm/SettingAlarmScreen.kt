@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 
-package com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm
+package com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -54,8 +54,8 @@ import com.jesushz.snoozeloo.core.presentation.components.DayCard
 import com.jesushz.snoozeloo.core.presentation.components.InputTime
 import com.jesushz.snoozeloo.core.presentation.theme.LightGray
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
-import com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm.components.CloseButton
-import com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm.components.SaveButton
+import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.CloseButton
+import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.SaveButton
 import kotlin.math.min
 
 @Composable

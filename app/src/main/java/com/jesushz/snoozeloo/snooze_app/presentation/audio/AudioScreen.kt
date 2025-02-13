@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.audio
+package com.jesushz.snoozeloo.snooze_app.presentation.audio
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -16,8 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import com.jesushz.snoozeloo.alarms_app.presentation.audio.components.AudioCard
-import com.jesushz.snoozeloo.alarms_app.presentation.audio.components.BackButton
+import com.jesushz.snoozeloo.snooze_app.presentation.audio.components.AudioCard
+import com.jesushz.snoozeloo.snooze_app.presentation.audio.components.BackButton
 
 @Composable
 fun AudioScreenRoot() {

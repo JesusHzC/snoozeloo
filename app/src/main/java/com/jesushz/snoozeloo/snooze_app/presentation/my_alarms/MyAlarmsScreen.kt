@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.my_alarms
+package com.jesushz.snoozeloo.snooze_app.presentation.my_alarms
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,9 +19,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jesushz.snoozeloo.R
-import com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components.EmptyAlarms
-import com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components.FloatingButton
-import com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components.ListAlarms
+import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.EmptyAlarms
+import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.FloatingButton
+import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.ListAlarms
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
 
 @Composable

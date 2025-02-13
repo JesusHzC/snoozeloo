@@ -1,11 +1,11 @@
-package com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm.components
+package com.jesushz.snoozeloo.snooze_app.presentation.audio.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -16,12 +16,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.jesushz.snoozeloo.R
-import com.jesushz.snoozeloo.core.presentation.theme.DisableButton
 
 @Composable
-fun CloseButton(
+fun BackButton(
     modifier: Modifier = Modifier,
-    onCloseClick: () -> Unit
+    onBackClick: () -> Unit
 ) {
     Box(
         modifier = modifier
@@ -29,27 +28,27 @@ fun CloseButton(
                 RoundedCornerShape(20)
             )
             .background(
-                color = DisableButton
+                color = MaterialTheme.colorScheme.primary
             )
             .clickable {
-                onCloseClick()
+                onBackClick()
             },
         contentAlignment = Alignment.Center
     ) {
         Icon(
-            imageVector = Icons.Default.Close,
+            imageVector = Icons.AutoMirrored.Default.ArrowBack,
             contentDescription = stringResource(R.string.close),
             tint = Color.White
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview
 @Composable
-private fun CloseButtonPreview() {
+private fun BackButtonPreview() {
     MaterialTheme {
-        CloseButton(
-            onCloseClick = {}
+        BackButton(
+            onBackClick = {}
         )
     }
 }
