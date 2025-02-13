@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation
+package com.jesushz.snoozeloo
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,10 +10,10 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
-import com.jesushz.snoozeloo.presentation.components.Route
+import com.jesushz.snoozeloo.core.presentation.components.Route
 import com.jesushz.snoozeloo.presentation.my_alarms.MyAlarmsScreenRoot
 import com.jesushz.snoozeloo.presentation.setting_alarm.SettingAlarmScreenRoot
-import com.jesushz.snoozeloo.presentation.theme.SnoozelooTheme
+import com.jesushz.snoozeloo.core.presentation.theme.SnoozelooTheme
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

@@ -5,4 +5,10 @@
     <string name="no_alarms">It\'s empty! Add the first alarm so you\ndon\'t miss an important moment!</string>
     <string name="save">Save</string>
     <string name="close">Close</string>
+    <string name="time_separator">:</string>
+    <string name="alarm_name">Alarm Name</string>
+    <string name="repeat">Repeat</string>
+    <string name="alarm_ringtone">Alarm ringtone</string>
+    <string name="alarm_volume">Alarm volume</string>
+    <string name="alarm_vibrate">Vibrate</string>
 </resources>

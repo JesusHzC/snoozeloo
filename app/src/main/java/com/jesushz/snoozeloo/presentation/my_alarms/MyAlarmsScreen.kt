@@ -22,7 +22,7 @@ import com.jesushz.snoozeloo.R
 import com.jesushz.snoozeloo.presentation.my_alarms.components.EmptyAlarms
 import com.jesushz.snoozeloo.presentation.my_alarms.components.FloatingButton
 import com.jesushz.snoozeloo.presentation.my_alarms.components.ListAlarms
-import com.jesushz.snoozeloo.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
 
 @Composable
 fun MyAlarmsScreenRoot(

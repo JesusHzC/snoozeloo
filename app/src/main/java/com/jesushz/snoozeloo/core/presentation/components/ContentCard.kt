@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation.components
+package com.jesushz.snoozeloo.core.presentation.components
 
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape

@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation.components
+package com.jesushz.snoozeloo.core.presentation.components
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
@@ -34,7 +34,7 @@ fun DayCard(
         onClick = onDayClick
     ) {
         Box(
-            modifier = modifier
+            modifier = Modifier
                 .padding(
                     horizontal = 12.dp,
                     vertical = 4.dp

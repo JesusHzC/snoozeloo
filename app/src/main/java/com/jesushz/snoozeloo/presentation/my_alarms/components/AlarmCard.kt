@@ -31,10 +31,10 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.jesushz.snoozeloo.presentation.components.ContentCard
-import com.jesushz.snoozeloo.presentation.components.DayCard
-import com.jesushz.snoozeloo.presentation.theme.LightGray
-import com.jesushz.snoozeloo.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.core.presentation.components.ContentCard
+import com.jesushz.snoozeloo.core.presentation.components.DayCard
+import com.jesushz.snoozeloo.core.presentation.theme.LightGray
+import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
 
 @Composable
 fun AlarmCard(

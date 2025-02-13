@@ -18,7 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jesushz.snoozeloo.R
-import com.jesushz.snoozeloo.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
 
 @Composable
 fun EmptyAlarms(

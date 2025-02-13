@@ -18,7 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.jesushz.snoozeloo.R
-import com.jesushz.snoozeloo.presentation.theme.DisableButton
+import com.jesushz.snoozeloo.core.presentation.theme.DisableButton
 
 @Composable
 fun CloseButton(
@@ -27,12 +27,11 @@ fun CloseButton(
 ) {
     Box(
         modifier = modifier
-            .size(32.dp)
+            .clip(
+                RoundedCornerShape(20)
+            )
             .background(
                 color = DisableButton
-            )
-            .clip(
-                RoundedCornerShape(10)
             )
             .clickable {
                 onBackClick()
