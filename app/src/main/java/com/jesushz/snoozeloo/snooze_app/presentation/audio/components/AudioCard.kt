@@ -23,12 +23,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.jesushz.snoozeloo.R
+import com.jesushz.snoozeloo.core.data.model.Ringtone
 import com.jesushz.snoozeloo.core.presentation.components.ContentCard
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
 
 @Composable
 fun AudioCard(
     modifier: Modifier = Modifier,
+    ringtone: Ringtone,
     isSilentMode: Boolean = false,
     isSelected: Boolean = false,
     onSoundClick: () -> Unit
@@ -62,7 +64,7 @@ fun AudioCard(
                 )
             }
             Text(
-                text = "Silent",
+                text = ringtone.name,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.SemiBold,
                 fontSize = 14.sp,
@@ -97,6 +99,7 @@ fun AudioCard(
 private fun AudioCardPreview() {
     MaterialTheme {
         AudioCard(
+            ringtone = Ringtone("Silent", "silent"),
             isSelected = true,
             onSoundClick = {}
         )

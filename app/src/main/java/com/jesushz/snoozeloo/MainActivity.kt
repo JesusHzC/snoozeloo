@@ -51,7 +51,11 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable<Route.SettingAlarm> {
-                            SettingAlarmScreenRoot()
+                            SettingAlarmScreenRoot(
+                                navigateToAudioScreen = {
+                                    navController.navigate(Route.Audio)
+                                }
+                            )
                         }
 
                         composable<Route.Audio> {

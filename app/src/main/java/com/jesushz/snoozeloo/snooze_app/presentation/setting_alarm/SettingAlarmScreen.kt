@@ -59,12 +59,18 @@ import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.Sa
 import kotlin.math.min
 
 @Composable
-fun SettingAlarmScreenRoot() {
-    SettingAlarmScreen()
+fun SettingAlarmScreenRoot(
+    navigateToAudioScreen: () -> Unit = {}
+) {
+    SettingAlarmScreen(
+        navigateToAudioScreen = navigateToAudioScreen
+    )
 }
 
 @Composable
-private fun SettingAlarmScreen() {
+private fun SettingAlarmScreen(
+    navigateToAudioScreen: () -> Unit = {}
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -100,7 +106,10 @@ private fun SettingAlarmScreen() {
         Spacer(modifier = Modifier.height(16.dp))
         AlarmRingTone(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            onSoundClick = {
+                navigateToAudioScreen()
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmVolume(
@@ -215,10 +224,14 @@ private fun AlarmVolume(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmRingTone(modifier: Modifier = Modifier) {
+private fun AlarmRingTone(
+    modifier: Modifier = Modifier,
+    onSoundClick: () -> Unit
+) {
     ContentCard(
         modifier = modifier
-            .fillMaxWidth()
+            .fillMaxWidth(),
+        onCardClick = onSoundClick
     ) {
         Row(
             modifier = Modifier

@@ -11,7 +11,7 @@ composeBom = "2025.01.01"
 coreSplashscreen = "1.0.1"
 koin = "4.0.0"
 ksp = "2.0.20-1.0.24"
-room = "2.7.0-alpha13"
+room = "2.7.0-beta01"
 navigationCompose = "2.8.6"
 kotlinSerialization = "1.7.3"
 

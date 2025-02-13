@@ -13,19 +13,33 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.jesushz.snoozeloo.core.data.model.Ringtone
+import com.jesushz.snoozeloo.core.domain.audio.AudioManager.Companion.SILENT
 import com.jesushz.snoozeloo.snooze_app.presentation.audio.components.AudioCard
 import com.jesushz.snoozeloo.snooze_app.presentation.audio.components.BackButton
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
-fun AudioScreenRoot() {
-    AudioScreen()
+fun AudioScreenRoot(
+    viewModel: AudioViewModel = koinViewModel()
+) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    AudioScreen(
+        state = state,
+        onAction = viewModel::onAction
+    )
 }
 
 @Composable
-private fun AudioScreen() {
+private fun AudioScreen(
+    state: AudioState,
+    onAction: (AudioAction) -> Unit
+) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -41,17 +55,21 @@ private fun AudioScreen() {
             onBackClick = {}
         )
         Spacer(modifier = Modifier.size(16.dp))
-        val tmpSounds = listOf(
-            "Sound 1", "Sound 2", "Sound 3", "Sound 4", "Sound 5", "Sound 6", "Sound 7", "Sound 8"
-        )
         LazyColumn(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(
-                items = tmpSounds
+                items = state.availableSounds
             ) { sound ->
-                AudioCard {  }
+                AudioCard(
+                    ringtone = sound,
+                    isSilentMode = sound.uri == SILENT,
+                    isSelected = sound.name.contains("Default"),
+                    onSoundClick = {
+                        onAction(AudioAction.OnAudioSelected(sound))
+                    }
+                )
             }
         }
     }
@@ -61,6 +79,15 @@ private fun AudioScreen() {
 @Composable
 private fun AudioScreenPreview() {
     MaterialTheme {
-        AudioScreen()
+        AudioScreen(
+            state = AudioState(
+                availableSounds = listOf(
+                    Ringtone("Silent", SILENT),
+                    Ringtone("Default", ""),
+                    Ringtone("Sound", ""),
+                )
+            ),
+            onAction = {}
+        )
     }
 }
