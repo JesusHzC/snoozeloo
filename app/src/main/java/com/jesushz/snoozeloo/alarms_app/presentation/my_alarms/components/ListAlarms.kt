@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation.my_alarms.components
+package com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.lazy.LazyColumn

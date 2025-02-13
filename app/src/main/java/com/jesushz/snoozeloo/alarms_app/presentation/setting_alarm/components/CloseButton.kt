@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation.setting_alarm.components
+package com.jesushz.snoozeloo.alarms_app.presentation.setting_alarm.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

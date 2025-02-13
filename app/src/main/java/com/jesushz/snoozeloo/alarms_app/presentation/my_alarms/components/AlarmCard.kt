@@ -1,6 +1,6 @@
 @file:OptIn(ExperimentalLayoutApi::class, ExperimentalLayoutApi::class)
 
-package com.jesushz.snoozeloo.presentation.my_alarms.components
+package com.jesushz.snoozeloo.alarms_app.presentation.my_alarms.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

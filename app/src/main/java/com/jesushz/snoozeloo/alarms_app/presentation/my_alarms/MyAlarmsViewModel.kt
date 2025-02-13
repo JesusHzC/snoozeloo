@@ -1,4 +1,4 @@
-package com.jesushz.snoozeloo.presentation.my_alarms
+package com.jesushz.snoozeloo.alarms_app.presentation.my_alarms
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
