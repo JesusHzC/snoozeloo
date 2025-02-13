@@ -39,7 +39,6 @@ android {
     }
     buildFeatures {
         compose = true
-        buildConfig = true
     }
     room {
         schemaDirectory("$projectDir/schemas")

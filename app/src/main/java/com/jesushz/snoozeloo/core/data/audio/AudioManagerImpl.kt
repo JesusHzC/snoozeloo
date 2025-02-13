@@ -1,9 +1,11 @@
 package com.jesushz.snoozeloo.core.data.audio
 
 import android.content.Context
+import android.media.AudioAttributes
 import android.media.AudioManager.STREAM_ALARM
 import android.media.MediaPlayer
 import android.net.Uri
+import android.os.Build
 import com.jesushz.snoozeloo.core.data.model.Ringtone
 import com.jesushz.snoozeloo.core.domain.audio.AudioManager
 import com.jesushz.snoozeloo.core.domain.audio.AudioManager.Companion.SILENT
@@ -53,6 +55,7 @@ class AudioManagerImpl(
         return@withContext ringtones
     }
 
+    @Suppress("DEPRECATION")
     override fun play(uri: String, volume: Float, isLooping: Boolean) {
         val fullUri: Uri = try {
             if (uri == SILENT) {
@@ -69,7 +72,16 @@ class AudioManagerImpl(
         }
 
         mediaPlayer = MediaPlayer().apply {
-            setAudioStreamType(STREAM_ALARM)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                setAudioAttributes(
+                    AudioAttributes.Builder()
+                        .setUsage(AudioAttributes.USAGE_ALARM)
+                        .setContentType(AudioAttributes.CONTENT_TYPE_MUSIC)
+                        .build()
+                )
+            } else {
+                setAudioStreamType(STREAM_ALARM)
+            }
             setDataSource(context, fullUri)
             setVolume(volume, volume)
             prepare()
