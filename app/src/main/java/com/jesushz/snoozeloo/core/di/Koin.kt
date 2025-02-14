@@ -1,6 +1,8 @@
 package com.jesushz.snoozeloo.core.di
 
 import android.content.Context
+import com.jesushz.snoozeloo.snooze_app.di.snoozeRepositoryModule
+import com.jesushz.snoozeloo.snooze_app.di.snoozeUseCaseModule
 import com.jesushz.snoozeloo.snooze_app.di.snoozeViewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.android.ext.koin.androidLogger
@@ -12,8 +14,12 @@ fun initKoin(ctx: Context) {
         androidContext(ctx)
         modules(
             listOf(
+                appModule,
                 coreAudioModule,
-                snoozeViewModelModule
+                snoozeViewModelModule,
+                databaseModule,
+                snoozeRepositoryModule,
+                snoozeUseCaseModule
             )
         )
     }
