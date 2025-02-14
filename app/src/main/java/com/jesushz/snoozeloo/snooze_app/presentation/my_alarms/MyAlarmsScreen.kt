@@ -17,16 +17,16 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.jesushz.snoozeloo.R
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.EmptyAlarms
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.FloatingButton
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.ListAlarms
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
+import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MyAlarmsScreenRoot(
-    viewModel: MyAlarmsViewModel = viewModel(),
+    viewModel: MyAlarmsViewModel = koinViewModel(),
     onNavigateToSettingAlarm: () -> Unit = {}
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
@@ -86,7 +86,7 @@ private fun MyAlarmsScreen(
 private fun MyAlarmsScreenPreview() {
     MaterialTheme {
         MyAlarmsScreen(
-            state = MyAlarmsState(alarms = listOf("Alarm 1", "Alarm 2"))
+            state = MyAlarmsState(alarms = emptyList())
         )
     }
 }
