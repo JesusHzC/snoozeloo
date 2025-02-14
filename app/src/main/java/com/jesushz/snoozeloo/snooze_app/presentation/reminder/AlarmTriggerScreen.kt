@@ -108,7 +108,7 @@ fun AlarmTriggerScreen(
 private fun AlarmTriggerScreenPreview() {
     SnoozelooTheme {
         AlarmTriggerScreen(
-            alarm = getDummyAlarm(name = "Work", hour = 10, minute = 0, enabled = true),
+            alarm = getDummyAlarm(),
             onTurnOffClick = {},
             onSnoozeClick = {}
         )

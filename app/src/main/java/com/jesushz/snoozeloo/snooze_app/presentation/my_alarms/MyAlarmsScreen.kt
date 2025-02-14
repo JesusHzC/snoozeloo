@@ -3,6 +3,7 @@ package com.jesushz.snoozeloo.snooze_app.presentation.my_alarms
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -22,29 +23,47 @@ import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.EmptyA
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.FloatingButton
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.components.ListAlarms
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.snooze_app.data.model.Alarm
+import com.jesushz.snoozeloo.snooze_app.data.model.AlarmUi
+import com.jesushz.snoozeloo.snooze_app.util.getDummyAlarm
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun MyAlarmsScreenRoot(
     viewModel: MyAlarmsViewModel = koinViewModel(),
-    onNavigateToSettingAlarm: () -> Unit = {}
+    onCreateNewAlarm: () -> Unit,
+    onAlarmSelected: (Alarm) -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     MyAlarmsScreen(
         state = state,
-        onNavigateToSettingAlarm = onNavigateToSettingAlarm
+        onAction = { action ->
+            when (action) {
+                MyAlarmsAction.OnCreateNewAlarm -> {
+                    onCreateNewAlarm()
+                }
+                is MyAlarmsAction.OnAlarmSelected -> {
+                    onAlarmSelected(action.alarm)
+                }
+                else -> viewModel.onAction(action)
+            }
+        }
     )
 }
 
 @Composable
 private fun MyAlarmsScreen(
     state: MyAlarmsState,
-    onNavigateToSettingAlarm: () -> Unit = {}
+    onAction: (MyAlarmsAction) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             FloatingButton(
-                onButtonClick = onNavigateToSettingAlarm
+                onButtonClick = {
+                    onAction(
+                        MyAlarmsAction.OnCreateNewAlarm
+                    )
+                }
             )
         },
         floatingActionButtonPosition = FabPosition.Center
@@ -73,7 +92,27 @@ private fun MyAlarmsScreen(
                         modifier = Modifier
                             .align(Alignment.TopStart)
                             .padding(top = 64.dp),
-                        alarms = (1..20).map { it.toString() },
+                        alarms = state.alarms,
+                        onAlarmClick = {
+                            onAction(
+                                MyAlarmsAction.OnAlarmSelected(it)
+                            )
+                        },
+                        onDeleteAlarmClick = {
+                            onAction(
+                                MyAlarmsAction.OnDeleteAlarm(it)
+                            )
+                        },
+                        onToggleAlarm = {
+                            onAction(
+                                MyAlarmsAction.OnToggleAlarm(it)
+                            )
+                        },
+                        onToggleDayOfAlarm = { alarm, day ->
+                            onAction(
+                                MyAlarmsAction.OnToggleDayOfAlarm(alarm, day)
+                            )
+                        }
                     )
                 }
             }
@@ -86,7 +125,16 @@ private fun MyAlarmsScreen(
 private fun MyAlarmsScreenPreview() {
     MaterialTheme {
         MyAlarmsScreen(
-            state = MyAlarmsState(alarms = emptyList())
+            state = MyAlarmsState(
+                alarms = listOf(
+                    AlarmUi(
+                        alarm = getDummyAlarm(),
+                        timeLeftInSeconds = 3600,
+                        timeToSleepInSeconds = 3600
+                    )
+                )
+            ),
+            onAction = {},
         )
     }
 }

@@ -8,11 +8,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.jesushz.snoozeloo.snooze_app.data.model.Alarm
+import com.jesushz.snoozeloo.snooze_app.data.model.AlarmUi
+import com.jesushz.snoozeloo.snooze_app.data.model.DayValue
+import com.jesushz.snoozeloo.snooze_app.util.getDummyAlarm
 
 @Composable
 fun ListAlarms(
     modifier: Modifier = Modifier,
-    alarms: List<String>
+    alarms: List<AlarmUi> = emptyList(),
+    onAlarmClick: (Alarm) -> Unit,
+    onDeleteAlarmClick: (Alarm) -> Unit,
+    onToggleAlarm: (Alarm) -> Unit,
+    onToggleDayOfAlarm: (Alarm, DayValue) -> Unit
 ) {
     LazyColumn(
         modifier = modifier,
@@ -21,8 +29,22 @@ fun ListAlarms(
         items(
             items = alarms,
             key = { it }
-        ) { alarm ->
-            AlarmCard()
+        ) { alarmUi ->
+            AlarmCard(
+                alarmUi = alarmUi,
+                onAlarmClick = {
+                    onAlarmClick(alarmUi.alarm)
+                },
+                onDeleteAlarmClick = {
+                    onDeleteAlarmClick(alarmUi.alarm)
+                },
+                onToggleAlarm = {
+                    onToggleAlarm(alarmUi.alarm)
+                },
+                onToggleDayOfAlarm = { day ->
+                    onToggleDayOfAlarm(alarmUi.alarm, day)
+                }
+            )
         }
     }
 }
@@ -32,7 +54,17 @@ fun ListAlarms(
 private fun ListAlarmsPreview() {
     MaterialTheme {
         ListAlarms(
-            alarms = (1..20).map { it.toString() }
+            alarms = listOf(
+                AlarmUi(
+                    alarm = getDummyAlarm(),
+                    timeLeftInSeconds = 3600,
+                    timeToSleepInSeconds = 3600
+                )
+            ),
+            onAlarmClick = {},
+            onDeleteAlarmClick = {},
+            onToggleAlarm = {},
+            onToggleDayOfAlarm = {_, _ ->}
         )
     }
 }

@@ -42,144 +42,182 @@ import com.jesushz.snoozeloo.core.presentation.components.ContentCard
 import com.jesushz.snoozeloo.core.presentation.components.DayCard
 import com.jesushz.snoozeloo.core.presentation.theme.LightGray
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.core.util.formatHourMinute
+import com.jesushz.snoozeloo.core.util.formatSeconds
+import com.jesushz.snoozeloo.core.util.formatSecondsToHourAndMinute
+import com.jesushz.snoozeloo.core.util.getAmPm
+import com.jesushz.snoozeloo.snooze_app.data.model.AlarmUi
+import com.jesushz.snoozeloo.snooze_app.data.model.DayValue
+import com.jesushz.snoozeloo.snooze_app.util.getDummyAlarm
 import kotlin.math.min
 
 @Composable
 fun AlarmCard(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    alarmUi: AlarmUi,
+    onAlarmClick: () -> Unit,
+    onDeleteAlarmClick: () -> Unit,
+    onToggleAlarm: () -> Unit,
+    onToggleDayOfAlarm: (DayValue) -> Unit
 ) {
-   ContentCard(
-       modifier = modifier
-           .fillMaxWidth()
-           .heightIn(max = 300.dp)
-   ) {
-       Column(
-           modifier = Modifier
-               .fillMaxWidth()
-               .padding(16.dp)
-       ) {
-           Row(
-               modifier = Modifier
-                   .fillMaxWidth(),
-               verticalAlignment = Alignment.Top
-           ) {
-               Column(
-                   modifier = Modifier.weight(1f)
-               ) {
-                   Text(
-                       text = "Alarm 1",
-                       fontFamily = MontserratFamily,
-                       fontWeight = FontWeight.SemiBold,
-                       fontSize = 16.sp
-                   )
-                   Spacer(modifier = Modifier.height(4.dp))
-                   Text(
-                       text = buildAnnotatedString {
-                           withStyle(
-                               style = SpanStyle(
-                                   fontFamily = MontserratFamily,
-                                   fontWeight = FontWeight.Medium,
-                                   fontSize = 42.sp
-                               )
-                           ) {
-                               append("10:00")
-                           }
-                           withStyle(
-                               style = SpanStyle(
-                                   fontFamily = MontserratFamily,
-                                   fontWeight = FontWeight.Medium,
-                                   fontSize = 24.sp
-                               )
-                           ) {
-                               append(" AM")
-                           }
-                       },
-                       fontFamily = MontserratFamily,
-                       fontWeight = FontWeight.Medium,
-                       fontSize = 42.sp
-                   )
-                   Spacer(modifier = Modifier.height(8.dp))
-                   Text(
-                       text = "Alarm in 30min",
-                       fontFamily = MontserratFamily,
-                       fontWeight = FontWeight.Medium,
-                       fontSize = 14.sp,
-                       color = LightGray
-                   )
-               }
-               Box(
-                   modifier = Modifier
-                       .weight(1f),
-                   contentAlignment = Alignment.TopEnd
-               ) {
-                   Switch(
-                       checked = true,
-                       onCheckedChange = {},
-                       colors = SwitchDefaults.colors(
-                           uncheckedBorderColor = MaterialTheme.colorScheme.secondary,
-                           uncheckedTrackColor = MaterialTheme.colorScheme.secondary,
-                           uncheckedThumbColor = MaterialTheme.colorScheme.surface,
-                           uncheckedIconColor = MaterialTheme.colorScheme.surface,
-                       ),
-                       thumbContent = {
-                           Box(
-                               modifier = Modifier
-                                   .clip(CircleShape)
-                                   .background(
-                                       color = MaterialTheme.colorScheme.surface
-                                   )
-                                   .size(24.dp)
-                           )
-                       }
-                   )
-               }
-           }
-           Spacer(modifier = Modifier.height(8.dp))
-           var maxWidth by remember {
-               mutableIntStateOf(0)
-           }
-           val maxWidthDp = with(LocalDensity.current) { maxWidth.toDp() }
-           FlowRow (
-               modifier = Modifier
-                   .fillMaxWidth(),
-               horizontalArrangement = Arrangement.spacedBy(2.dp),
-           ) {
-               repeat(7) {
-                   DayCard(
-                       modifier = Modifier
-                           .weight(1f)
-                           .width(maxWidthDp)
-                           .onSizeChanged {
-                               maxWidth = min(maxWidth, it.width)
-                           },
-                       isActivated = false,
-                       onDayClick = {}
-                   ) {
-                       Text(
-                           text = "Th",
-                           fontFamily = MontserratFamily,
-                           fontWeight = FontWeight.Medium,
-                           fontSize = 12.sp
-                       )
-                   }
-               }
-           }
-           Spacer(modifier = Modifier.height(8.dp))
-           Text(
-               text = "Go to bed at 02:00AM to get 8h of sleep",
-               fontFamily = MontserratFamily,
-               fontWeight = FontWeight.Medium,
-               fontSize = 14.sp,
-               color = LightGray
-           )
-       }
-   }
+    val alarm = alarmUi.alarm
+    val timeLeftInSeconds = alarmUi.timeLeftInSeconds
+    val timeToSleepInSeconds = alarmUi.timeToSleepInSeconds
+    ContentCard(
+        modifier = modifier
+            .fillMaxWidth()
+            .heightIn(max = 300.dp),
+        onCardClick = onAlarmClick
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                verticalAlignment = Alignment.Top
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = alarm.name,
+                        fontFamily = MontserratFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 16.sp
+                    )
+                    Spacer(modifier = Modifier.height(4.dp))
+                    Text(
+                        text = buildAnnotatedString {
+                            withStyle(
+                                style = SpanStyle(
+                                    fontFamily = MontserratFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 42.sp
+                                )
+                            ) {
+                                append(formatHourMinute(alarm.hour, alarm.minute))
+                            }
+                            withStyle(
+                                style = SpanStyle(
+                                    fontFamily = MontserratFamily,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 24.sp
+                                )
+                            ) {
+                                append(" ${getAmPm(alarm.isMorning)}")
+                            }
+                        },
+                        fontFamily = MontserratFamily,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 42.sp
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    if (alarm.enabled) {
+                        val remainingTimeStr = formatSeconds(timeLeftInSeconds)
+
+                        if (remainingTimeStr.isNotBlank()) {
+                            Text(
+                                text = "Alarm in $remainingTimeStr",
+                                fontFamily = MontserratFamily,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 14.sp,
+                                color = LightGray
+                            )
+                        }
+                    }
+                }
+                Box(
+                    modifier = Modifier
+                        .weight(1f),
+                    contentAlignment = Alignment.TopEnd
+                ) {
+                    Switch(
+                        checked = alarm.enabled,
+                        onCheckedChange = {
+                            onToggleAlarm()
+                        },
+                        colors = SwitchDefaults.colors(
+                            uncheckedBorderColor = MaterialTheme.colorScheme.secondary,
+                            uncheckedTrackColor = MaterialTheme.colorScheme.secondary,
+                            uncheckedThumbColor = MaterialTheme.colorScheme.surface,
+                            uncheckedIconColor = MaterialTheme.colorScheme.surface,
+                        ),
+                        thumbContent = {
+                            Box(
+                                modifier = Modifier
+                                    .clip(CircleShape)
+                                    .background(
+                                        color = MaterialTheme.colorScheme.surface
+                                    )
+                                    .size(24.dp)
+                            )
+                        }
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            var maxWidth by remember {
+                mutableIntStateOf(0)
+            }
+            val maxWidthDp = with(LocalDensity.current) { maxWidth.toDp() }
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(2.dp),
+            ) {
+                DayValue.entries.forEach { day ->
+                    DayCard(
+                        modifier = Modifier
+                            .weight(1f)
+                            .width(maxWidthDp)
+                            .onSizeChanged {
+                                maxWidth = min(maxWidth, it.width)
+                            },
+                        isActivated = alarm.repeatDays.contains(day),
+                        onDayClick = {
+                            onToggleDayOfAlarm(day)
+                        }
+                    ) {
+                        Text(
+                            text = day.value,
+                            fontFamily = MontserratFamily,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 12.sp
+                        )
+                    }
+                }
+            }
+            Spacer(modifier = Modifier.height(8.dp))
+            if (timeToSleepInSeconds != null && alarm.enabled) {
+                Text(
+                    text = "Go to bed at ${formatSecondsToHourAndMinute(timeToSleepInSeconds)} to get 8h of sleep",
+                    fontFamily = MontserratFamily,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 14.sp,
+                    color = LightGray
+                )
+            }
+        }
+    }
 }
 
 @Preview
 @Composable
 private fun AlarmCardPreview() {
     MaterialTheme {
-        AlarmCard()
+        AlarmCard(
+            alarmUi = AlarmUi(
+                alarm = getDummyAlarm(),
+                timeLeftInSeconds = 3600,
+                timeToSleepInSeconds = 3600
+            ),
+            onAlarmClick = {},
+            onDeleteAlarmClick = {},
+            onToggleAlarm = {},
+            onToggleDayOfAlarm = {}
+        )
     }
 }

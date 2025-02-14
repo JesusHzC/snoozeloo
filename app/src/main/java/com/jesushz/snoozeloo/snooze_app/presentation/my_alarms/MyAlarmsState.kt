@@ -1,7 +1,7 @@
 package com.jesushz.snoozeloo.snooze_app.presentation.my_alarms
 
-import com.jesushz.snoozeloo.snooze_app.data.model.Alarm
+import com.jesushz.snoozeloo.snooze_app.data.model.AlarmUi
 
 data class MyAlarmsState(
-    val alarms: List<Alarm> = emptyList(),
+    val alarms: List<AlarmUi> = emptyList(),
 )

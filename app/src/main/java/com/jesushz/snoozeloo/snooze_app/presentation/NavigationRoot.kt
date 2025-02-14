@@ -25,7 +25,10 @@ fun NavigationRoot(
         ) {
             composable<Route.MyAlarms> {
                 MyAlarmsScreenRoot(
-                    onNavigateToSettingAlarm = {
+                    onCreateNewAlarm = {
+                        navController.navigate(Route.SettingAlarm)
+                    },
+                    onAlarmSelected = { _ ->
                         navController.navigate(Route.SettingAlarm)
                     }
                 )
