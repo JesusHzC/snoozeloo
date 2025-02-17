@@ -12,4 +12,5 @@
     <string name="alarm_volume">Alarm volume</string>
     <string name="alarm_vibrate">Vibrate</string>
     <string name="title_activity_reminder">ReminderActivity</string>
+    <string name="delete_alarm">Delete alarm</string>
 </resources>
