@@ -65,17 +65,20 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
                     context.sendBroadcast(dismissAlarmIntent)
                 }
             } else {
-                val notificationManager =
+                val channel = NotificationChannel(alarmId, alarmName, NotificationManager.IMPORTANCE_HIGH)
+                val notificationManager: NotificationManager =
                     context.getSystemService(NotificationManager::class.java)
-                val builder = NotificationCompat.Builder(context, AlarmConstants.CHANNEL_ID)
+                notificationManager.createNotificationChannel(channel)
+                val builder = NotificationCompat.Builder(context, alarmId)
                     .setSmallIcon(R.drawable.ic_alarm)
                     .setContentTitle(alarmName)
                     .setAutoCancel(true)
                     .setPriority(NotificationCompat.PRIORITY_HIGH)
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setFullScreenIntent(pendingIntent, true)
+                    .build()
 
-                notificationManager.notify(alarm.id.hashCode(), builder.build())
+                notificationManager.notify(alarm.id.hashCode(), builder)
             }
         }
     }
@@ -128,8 +131,9 @@ class AlarmReceiver: BroadcastReceiver(), KoinComponent {
             .setSmallIcon(R.drawable.ic_alarm)
             .setContentTitle(alarmName)
             .setContentIntent(pendingIntent)
-            .setPriority(Notification.PRIORITY_HIGH)
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setSilent(true)
             .setChannelId(channelId)
             .addAction(-1, "Snooze", getDismissAlarmPendingIntent(context, alarm, channelId, true))
             .addAction(-1, "Turn off", dismissAlarmPendingIntent)

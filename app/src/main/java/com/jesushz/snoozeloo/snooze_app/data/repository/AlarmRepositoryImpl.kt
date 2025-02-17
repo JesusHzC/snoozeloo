@@ -38,6 +38,9 @@ class AlarmRepositoryImpl(
 
     override suspend fun upsertAlarm(alarm: Alarm) {
         alarmDao.upsertAlarm(alarm.toAlarmEntity())
+        if (alarm.enabled) {
+            alarmScheduler.schedule(alarm)
+        }
     }
 
     override suspend fun toggle(alarm: Alarm) {

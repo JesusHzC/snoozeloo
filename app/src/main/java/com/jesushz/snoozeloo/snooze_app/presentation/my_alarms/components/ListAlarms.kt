@@ -28,7 +28,7 @@ fun ListAlarms(
     ) {
         items(
             items = alarms,
-            key = { it }
+            key = { it.alarm.id }
         ) { alarmUi ->
             AlarmCard(
                 alarmUi = alarmUi,

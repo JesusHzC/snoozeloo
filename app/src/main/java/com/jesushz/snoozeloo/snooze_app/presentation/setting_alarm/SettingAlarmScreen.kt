@@ -31,7 +31,6 @@ import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -48,29 +47,76 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.jesushz.snoozeloo.R
+import com.jesushz.snoozeloo.core.data.model.Ringtone
 import com.jesushz.snoozeloo.core.presentation.components.ContentCard
 import com.jesushz.snoozeloo.core.presentation.components.DayCard
 import com.jesushz.snoozeloo.core.presentation.components.InputTime
 import com.jesushz.snoozeloo.core.presentation.theme.LightGray
 import com.jesushz.snoozeloo.core.presentation.theme.MontserratFamily
+import com.jesushz.snoozeloo.core.presentation.util.ObserveAsEvents
+import com.jesushz.snoozeloo.core.util.formatSeconds
+import com.jesushz.snoozeloo.snooze_app.data.model.DayValue
+import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.AlarmNameDialog
 import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.CloseButton
 import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.SaveButton
+import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
 
 @Composable
 fun SettingAlarmScreenRoot(
-    navigateToAudioScreen: () -> Unit = {}
+    viewModel: SettingAlarmViewModel = koinViewModel(),
+    onNavigateBack: () -> Unit,
+    onNavigateToAudio: () -> Unit,
 ) {
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    ObserveAsEvents(
+        flow = viewModel.channelEvent
+    ) { event ->
+        when (event) {
+            SettingAlarmEvent.OnSuccess -> {
+                onNavigateBack()
+            }
+        }
+    }
     SettingAlarmScreen(
-        navigateToAudioScreen = navigateToAudioScreen
+        state = state,
+        onAction = { action ->
+            when (action) {
+                is SettingAlarmAction.OnBackClick -> {
+                    onNavigateBack()
+                }
+                is SettingAlarmAction.OnNavigateToAudio -> {
+                    onNavigateToAudio()
+                }
+                else -> viewModel.onAction(action)
+            }
+        }
     )
 }
 
 @Composable
 private fun SettingAlarmScreen(
-    navigateToAudioScreen: () -> Unit = {}
+    state: SettingAlarmState,
+    onAction: (SettingAlarmAction) -> Unit,
 ) {
+    var showAlarmNameDialog by remember {
+        mutableStateOf(false)
+    }
+    AlarmNameDialog(
+        showDialog = showAlarmNameDialog,
+        name = state.name,
+        onNameChange = {
+            onAction(SettingAlarmAction.OnNameChange(it))
+        },
+        onDismiss = {
+            showAlarmNameDialog = false
+        },
+        onSaveClick = {
+            showAlarmNameDialog = false
+        }
+    )
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -86,47 +132,84 @@ private fun SettingAlarmScreen(
                 .fillMaxWidth()
                 .heightIn(
                     max = 32.dp
-                )
+                ),
+            saveButtonIsEnabled = state.isSaveButtonEnabled,
+            onSaveButtonClick = {
+                onAction(SettingAlarmAction.OnSaveClick)
+            },
+            onCloseButtonClick = {
+                onAction(SettingAlarmAction.OnBackClick)
+            }
         )
         Spacer(modifier = Modifier.padding(16.dp))
         TimeFields(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            minuteText = state.minutes,
+            hourText = state.hour,
+            onHourChange = {
+                onAction(SettingAlarmAction.OnHourChange(it))
+            },
+            onMinuteChange = {
+                onAction(SettingAlarmAction.OnMinutesChange(it))
+            },
+            timeLeftInSeconds = state.timeLeftInSeconds
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmName(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            alarmName = state.name,
+            onNameCardClicked = {
+                showAlarmNameDialog = true
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmRepeat(
             modifier = Modifier
-                .fillMaxWidth()
-        )
-        Spacer(modifier = Modifier.height(16.dp))
-        AlarmRingTone(
-            modifier = Modifier
                 .fillMaxWidth(),
-            onSoundClick = {
-                navigateToAudioScreen()
+            daysSelected = state.repeatDays,
+            onDaySelected = {
+                onAction(SettingAlarmAction.OnRepeatDaySelected(it))
             }
         )
         Spacer(modifier = Modifier.height(16.dp))
+        if (state.alarmRingtone != null) {
+            AlarmRingTone(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                onSoundClick = {
+                    onAction(SettingAlarmAction.OnNavigateToAudio)
+                },
+                currentRingtone = state.alarmRingtone
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
         AlarmVolume(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            currentVolume = state.alarmVolume,
+            onVolumeChange = {
+                onAction(SettingAlarmAction.OnAlarmVolumeChange(it))
+            }
         )
         Spacer(modifier = Modifier.height(16.dp))
         AlarmVibrate(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxWidth(),
+            isVibrateEnabled = state.alarmVibrate,
+            onVibrateChange = {
+                onAction(SettingAlarmAction.OnAlarmVibrate(it))
+            }
         )
     }
 }
 
 @Composable
 fun AlarmVibrate(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isVibrateEnabled: Boolean,
+    onVibrateChange: (Boolean) -> Unit
 ) {
     ContentCard(
         modifier = modifier
@@ -146,8 +229,10 @@ fun AlarmVibrate(
                 color = Color.Black
             )
             Switch(
-                checked = true,
-                onCheckedChange = {},
+                checked = isVibrateEnabled,
+                onCheckedChange = {
+                    onVibrateChange(it)
+                },
                 colors = SwitchDefaults.colors(
                     uncheckedBorderColor = MaterialTheme.colorScheme.secondary,
                     uncheckedTrackColor = MaterialTheme.colorScheme.secondary,
@@ -170,11 +255,14 @@ fun AlarmVibrate(
 }
 
 @Composable
-private fun AlarmVolume(modifier: Modifier = Modifier) {
+private fun AlarmVolume(
+    modifier: Modifier = Modifier,
+    currentVolume: Float,
+    onVolumeChange: (Float) -> Unit
+) {
     ContentCard(
         modifier = modifier
     ) {
-        var sliderPosition by remember { mutableFloatStateOf(0f) }
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -189,10 +277,9 @@ private fun AlarmVolume(modifier: Modifier = Modifier) {
             )
             Spacer(modifier = Modifier.height(8.dp))
             Slider(
-                value = sliderPosition,
+                value = currentVolume,
                 onValueChange = {
-                    sliderPosition = it
-                    println("Value: $it")
+                    onVolumeChange(it)
                 },
                 valueRange = 0f..100f,
                 thumb = {
@@ -226,6 +313,7 @@ private fun AlarmVolume(modifier: Modifier = Modifier) {
 @Composable
 private fun AlarmRingTone(
     modifier: Modifier = Modifier,
+    currentRingtone: Ringtone,
     onSoundClick: () -> Unit
 ) {
     ContentCard(
@@ -248,7 +336,7 @@ private fun AlarmRingTone(
                 color = Color.Black
             )
             Text(
-                text = "Default",
+                text = currentRingtone.name,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
@@ -259,7 +347,11 @@ private fun AlarmRingTone(
 }
 
 @Composable
-private fun AlarmRepeat(modifier: Modifier = Modifier) {
+private fun AlarmRepeat(
+    modifier: Modifier = Modifier,
+    daysSelected: List<DayValue>,
+    onDaySelected: (DayValue) -> Unit
+) {
     ContentCard(
         modifier = modifier
     ) {
@@ -285,7 +377,7 @@ private fun AlarmRepeat(modifier: Modifier = Modifier) {
                     .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(2.dp),
             ) {
-                repeat(7) {
+                DayValue.entries.forEach { day ->
                     DayCard(
                         modifier = Modifier
                             .weight(1f)
@@ -293,11 +385,13 @@ private fun AlarmRepeat(modifier: Modifier = Modifier) {
                             .onSizeChanged {
                                 maxWidth = min(maxWidth, it.width)
                             },
-                        isActivated = true,
-                        onDayClick = {}
+                        isActivated = daysSelected.contains(day),
+                        onDayClick = {
+                            onDaySelected(day)
+                        }
                     ) {
                         Text(
-                            text = "Th",
+                            text = day.value,
                             fontFamily = MontserratFamily,
                             fontWeight = FontWeight.Medium,
                             fontSize = 12.sp
@@ -310,9 +404,16 @@ private fun AlarmRepeat(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun AlarmName(modifier: Modifier = Modifier) {
+private fun AlarmName(
+    modifier: Modifier = Modifier,
+    alarmName: String,
+    onNameCardClicked: () -> Unit
+) {
     ContentCard(
-        modifier = modifier
+        modifier = modifier,
+        onCardClick = {
+            onNameCardClicked()
+        }
     ) {
         Row(
             modifier = Modifier
@@ -329,7 +430,7 @@ private fun AlarmName(modifier: Modifier = Modifier) {
                 color = Color.Black
             )
             Text(
-                text = "Work",
+                text = alarmName,
                 fontFamily = MontserratFamily,
                 fontWeight = FontWeight.Medium,
                 fontSize = 14.sp,
@@ -340,7 +441,12 @@ private fun AlarmName(modifier: Modifier = Modifier) {
 }
 
 @Composable
-private fun ActionButtons(modifier: Modifier = Modifier) {
+private fun ActionButtons(
+    modifier: Modifier = Modifier,
+    saveButtonIsEnabled: Boolean,
+    onCloseButtonClick: () -> Unit,
+    onSaveButtonClick: () -> Unit
+) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
@@ -349,20 +455,27 @@ private fun ActionButtons(modifier: Modifier = Modifier) {
         CloseButton(
             modifier = Modifier
                 .size(35.dp),
-            onCloseClick = {}
+            onCloseClick = onCloseButtonClick
         )
         SaveButton(
-            isEnabled = true,
+            isEnabled = saveButtonIsEnabled,
             contentPadding = PaddingValues(
                 horizontal = 20.dp
             ),
-            onButtonClick = {}
+            onButtonClick = onSaveButtonClick
         )
     }
 }
 
 @Composable
-private fun TimeFields(modifier: Modifier = Modifier) {
+private fun TimeFields(
+    modifier: Modifier = Modifier,
+    timeLeftInSeconds: Long? = null,
+    hourText: String,
+    minuteText: String,
+    onHourChange: (String) -> Unit,
+    onMinuteChange: (String) -> Unit
+) {
     ContentCard(
         modifier = modifier
     ) {
@@ -378,18 +491,12 @@ private fun TimeFields(modifier: Modifier = Modifier) {
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                var hour by remember {
-                    mutableStateOf("")
-                }
-                var minute by remember {
-                    mutableStateOf("")
-                }
                 InputTime(
                     modifier = Modifier
                         .weight(2f),
-                    text = hour,
+                    text = hourText,
                     onTextChange = {
-                        hour = it
+                        onHourChange(it)
                     }
                 )
                 Text(
@@ -405,21 +512,26 @@ private fun TimeFields(modifier: Modifier = Modifier) {
                 InputTime(
                     modifier = Modifier
                         .weight(2f),
-                    text = minute,
+                    text = minuteText,
                     onTextChange = {
-                        minute = it
+                        onMinuteChange(it)
                     }
                 )
             }
             Spacer(modifier = Modifier.height(16.dp))
-            Text(
-                text = "Alarm in 7h 15min",
-                fontFamily = MontserratFamily,
-                color = LightGray,
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-                textAlign = TextAlign.Center,
-            )
+            if (timeLeftInSeconds != null) {
+                val remainingTimeStr = formatSeconds(timeLeftInSeconds)
+                if (remainingTimeStr.isNotBlank()) {
+                    Text(
+                        text = "Alarm in $remainingTimeStr",
+                        fontFamily = MontserratFamily,
+                        color = LightGray,
+                        fontSize = 14.sp,
+                        fontWeight = FontWeight.Medium,
+                        textAlign = TextAlign.Center,
+                    )
+                }
+            }
         }
     }
 }
@@ -428,6 +540,9 @@ private fun TimeFields(modifier: Modifier = Modifier) {
 @Composable
 private fun SettingAlarmScreenPreview() {
     MaterialTheme {
-        SettingAlarmScreen()
+        SettingAlarmScreen(
+            state = SettingAlarmState(),
+            onAction = {}
+        )
     }
 }

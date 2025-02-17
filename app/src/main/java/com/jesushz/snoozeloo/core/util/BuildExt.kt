@@ -13,3 +13,7 @@ fun isPiePlus(): Boolean {
 fun isOreoMr1Plus(): Boolean {
     return Build.VERSION.SDK_INT >= Build.VERSION_CODES.O_MR1
 }
+
+fun isSnowCone(): Boolean {
+    return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+}

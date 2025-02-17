@@ -29,14 +29,17 @@ fun NavigationRoot(
                         navController.navigate(Route.SettingAlarm)
                     },
                     onAlarmSelected = { _ ->
-                        navController.navigate(Route.SettingAlarm)
+//                        navController.navigate(Route.SettingAlarm)
                     }
                 )
             }
 
             composable<Route.SettingAlarm> {
                 SettingAlarmScreenRoot(
-                    navigateToAudioScreen = {
+                    onNavigateBack = {
+                        navController.navigateUp()
+                    },
+                    onNavigateToAudio = {
                         navController.navigate(Route.Audio)
                     }
                 )
