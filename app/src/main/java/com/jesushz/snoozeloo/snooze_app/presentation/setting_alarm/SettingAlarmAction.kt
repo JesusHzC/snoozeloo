@@ -1,6 +1,7 @@
 package com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm
 
 import com.jesushz.snoozeloo.core.data.model.Ringtone
+import com.jesushz.snoozeloo.snooze_app.data.model.Alarm
 import com.jesushz.snoozeloo.snooze_app.data.model.DayValue
 
 sealed interface SettingAlarmAction {
@@ -15,5 +16,6 @@ sealed interface SettingAlarmAction {
     data object OnBackClick : SettingAlarmAction
     data object OnSaveClick : SettingAlarmAction
     data object OnNavigateToAudio : SettingAlarmAction
+    data class OnAlarmSelected(val alarm: Alarm) : SettingAlarmAction
 
 }

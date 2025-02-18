@@ -1,5 +1,6 @@
 package com.jesushz.snoozeloo.snooze_app.presentation.audio
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,20 +27,39 @@ import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun AudioScreenRoot(
-    viewModel: AudioViewModel = koinViewModel()
+    viewModel: AudioViewModel = koinViewModel(),
+    audioSelected: Ringtone? = null,
+    onAudioSelected: (Ringtone) -> Unit,
+    onNavigateBack: () -> Unit
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     AudioScreen(
         state = state,
-        onAction = viewModel::onAction
+        audioSelected = audioSelected,
+        onAction = {  action ->
+            when (action) {
+                is AudioAction.OnAudioSelected -> {
+                    viewModel.play(action.ringtone)
+                    onAudioSelected(action.ringtone)
+                }
+                AudioAction.OnBackClick -> {
+                    viewModel.stopEffects()
+                    onNavigateBack()
+                }
+            }
+        }
     )
 }
 
 @Composable
 private fun AudioScreen(
     state: AudioState,
+    audioSelected: Ringtone? = null,
     onAction: (AudioAction) -> Unit
 ) {
+    BackHandler {
+        onAction(AudioAction.OnBackClick)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -52,7 +72,9 @@ private fun AudioScreen(
         BackButton(
             modifier = Modifier
                 .size(32.dp),
-            onBackClick = {}
+            onBackClick = {
+                onAction(AudioAction.OnBackClick)
+            }
         )
         Spacer(modifier = Modifier.size(16.dp))
         LazyColumn(
@@ -65,7 +87,7 @@ private fun AudioScreen(
                 AudioCard(
                     ringtone = sound,
                     isSilentMode = sound.uri == SILENT,
-                    isSelected = sound.name.contains("Default"),
+                    isSelected = sound == audioSelected,
                     onSoundClick = {
                         onAction(AudioAction.OnAudioSelected(sound))
                     }

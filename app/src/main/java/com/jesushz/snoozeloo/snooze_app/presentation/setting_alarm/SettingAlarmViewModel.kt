@@ -35,13 +35,30 @@ class SettingAlarmViewModel(
 
     private var cacheSounds: List<Ringtone> = emptyList()
 
+    private val _channelEvent = Channel<SettingAlarmEvent>()
+    val channelEvent = _channelEvent.receiveAsFlow()
+
     private val _state = MutableStateFlow(SettingAlarmState())
     val state = _state
         .onStart {
-            if (cacheSounds.isEmpty()) {
-                observeAvailableSounds()
+            val selectedAlarm = _state.value.alarmSelected
+            if (selectedAlarm == null) {
+                if (cacheSounds.isEmpty()) {
+                    observeAvailableSounds(
+                        onDefaultRingtone = { ringtone ->
+                            ringtone?.let {
+                                viewModelScope.launch {
+                                    _channelEvent.send(SettingAlarmEvent.OnSelectedRingtone(it))
+                                }
+                            }
+                        }
+                    ).invokeOnCompletion {
+                        observeHourMinutes()
+                    }
+                }
+            } else {
+                loadAlarmSelected(selectedAlarm)
             }
-            observeHourMinutes()
         }
         .stateIn(
             scope = viewModelScope,
@@ -52,9 +69,6 @@ class SettingAlarmViewModel(
     private val hourFlow = snapshotFlow { _state.value.hour }
     private val minutesFlow = snapshotFlow { _state.value.minutes }
 
-    private val _channelEvent = Channel<SettingAlarmEvent>()
-    val channelEvent = _channelEvent.receiveAsFlow()
-
     fun onAction(action: SettingAlarmAction) = when (action) {
         is SettingAlarmAction.OnAlarmRingtoneSelected -> {
             _state.update {
@@ -62,6 +76,7 @@ class SettingAlarmViewModel(
                     alarmRingtone = action.ringtone
                 )
             }
+            observeHourMinutes()
         }
         is SettingAlarmAction.OnAlarmVibrate -> {
             _state.update {
@@ -118,8 +133,41 @@ class SettingAlarmViewModel(
         SettingAlarmAction.OnSaveClick -> {
             saveAlarm()
         }
+        is SettingAlarmAction.OnAlarmSelected -> {
+            _state.update {
+                it.copy(
+                    alarmSelected = action.alarm
+                )
+            }
+        }
         else -> {
             Unit
+        }
+    }
+
+    private fun loadAlarmSelected(alarm: Alarm) {
+        _state.update {
+            it.copy(
+                alarmSelected = alarm,
+                hour = alarm.hour.toString(),
+                minutes = alarm.minute.toString(),
+                name = alarm.name,
+                repeatDays = alarm.repeatDays.toList(),
+                alarmVolume = alarm.volume.toFloat(),
+                alarmVibrate = alarm.vibrate
+            )
+        }
+        observeAvailableSounds(
+            isAlarmSelected = true,
+            onDefaultRingtone = { ringtone ->
+                ringtone?.let {
+                    viewModelScope.launch {
+                        _channelEvent.send(SettingAlarmEvent.OnSelectedRingtone(it))
+                    }
+                }
+            }
+        ).invokeOnCompletion {
+            observeHourMinutes()
         }
     }
 
@@ -155,33 +203,61 @@ class SettingAlarmViewModel(
 
     private fun saveAlarm() {
         viewModelScope.launch(Dispatchers.IO) {
-            val alarm = Alarm(
-                id = UUID.randomUUID().toString(),
-                name = if (_state.value.name.isBlank()) "" else _state.value.name.trim(),
-                hour = _state.value.hour.toIntOrNull() ?: 0,
-                minute = _state.value.minutes.toIntOrNull() ?: 0,
-                enabled = true,
-                repeatDays = _state.value.repeatDays.toMutableSet(),
-                volume = _state.value.alarmVolume.roundToInt().coerceAtMost(100),
-                ringtoneUri = _state.value.alarmRingtone?.uri.orEmpty(),
-                vibrate = _state.value.alarmVibrate
-            )
-            alarmRepository.upsertAlarm(alarm)
-            _channelEvent.send(SettingAlarmEvent.OnSuccess)
+            val alarmSelected = _state.value.alarmSelected
+            if (alarmSelected != null) {
+                val alarm = Alarm(
+                    id = alarmSelected.id,
+                    name = if (_state.value.name.isBlank()) "" else _state.value.name.trim(),
+                    hour = _state.value.hour.toIntOrNull() ?: 0,
+                    minute = _state.value.minutes.toIntOrNull() ?: 0,
+                    enabled = true,
+                    repeatDays = _state.value.repeatDays.toMutableSet(),
+                    volume = _state.value.alarmVolume.roundToInt().coerceAtMost(100),
+                    ringtoneUri = _state.value.alarmRingtone?.uri.orEmpty(),
+                    vibrate = _state.value.alarmVibrate
+                )
+                alarmRepository.upsertAlarm(alarm)
+                _state.update {
+                    it.copy(
+                        alarmSelected = null
+                    )
+                }
+                _channelEvent.send(SettingAlarmEvent.OnSuccess)
+            } else {
+                val alarm = Alarm(
+                    id = UUID.randomUUID().toString(),
+                    name = if (_state.value.name.isBlank()) "" else _state.value.name.trim(),
+                    hour = _state.value.hour.toIntOrNull() ?: 0,
+                    minute = _state.value.minutes.toIntOrNull() ?: 0,
+                    enabled = true,
+                    repeatDays = _state.value.repeatDays.toMutableSet(),
+                    volume = _state.value.alarmVolume.roundToInt().coerceAtMost(100),
+                    ringtoneUri = _state.value.alarmRingtone?.uri.orEmpty(),
+                    vibrate = _state.value.alarmVibrate
+                )
+                alarmRepository.upsertAlarm(alarm)
+                _channelEvent.send(SettingAlarmEvent.OnSuccess)
+            }
         }
     }
 
-    private fun observeAvailableSounds() = viewModelScope.launch(Dispatchers.IO) {
+    private fun observeAvailableSounds(
+        isAlarmSelected: Boolean = false,
+        onDefaultRingtone: (Ringtone?) -> Unit
+    ) = viewModelScope.launch(Dispatchers.IO) {
         val sounds = audioManager
             .getAvailableSounds()
 
-        val defaultRingtone = sounds.find { it.name.contains("Default") }
-
-        _state.update {
-            it.copy(
-                alarmRingtone = defaultRingtone
-            )
+        val defaultRingtone = if (isAlarmSelected) {
+            val alarm = _state.value.alarmSelected
+            alarm?.let {
+                sounds.find { sound -> sound.uri == alarm.ringtoneUri }
+            } ?: sounds.find { it.name.contains("Default") }
+        } else {
+            sounds.find { it.name.contains("Default") }
         }
+
+        onDefaultRingtone(defaultRingtone)
 
         cacheSounds = sounds
     }

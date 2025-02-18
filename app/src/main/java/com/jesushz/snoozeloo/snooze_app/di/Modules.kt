@@ -13,6 +13,8 @@ import com.jesushz.snoozeloo.snooze_app.domain.use_case.GetTimeLeftInSecondsUseC
 import com.jesushz.snoozeloo.snooze_app.domain.use_case.GetTimeToSleepInSecondsUseCase
 import com.jesushz.snoozeloo.snooze_app.domain.use_case.ValidateAlarmUseCase
 import com.jesushz.snoozeloo.snooze_app.presentation.MainViewModel
+import com.jesushz.snoozeloo.snooze_app.presentation.SelectedAlarmViewModel
+import com.jesushz.snoozeloo.snooze_app.presentation.SelectedRingtoneViewModel
 import com.jesushz.snoozeloo.snooze_app.presentation.audio.AudioViewModel
 import com.jesushz.snoozeloo.snooze_app.presentation.my_alarms.MyAlarmsViewModel
 import com.jesushz.snoozeloo.snooze_app.presentation.reminder.ReminderViewModel
@@ -28,6 +30,8 @@ val snoozeViewModelModule = module {
     viewModelOf(::MainViewModel)
     viewModelOf(::SettingAlarmViewModel)
     viewModelOf(::ReminderViewModel)
+    viewModelOf(::SelectedAlarmViewModel)
+    viewModelOf(::SelectedRingtoneViewModel)
 }
 
 val snoozeRepositoryModule = module {

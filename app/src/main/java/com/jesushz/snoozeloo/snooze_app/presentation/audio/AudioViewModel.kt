@@ -45,6 +45,26 @@ class AudioViewModel(
                         isLooping = true
                     )
             }
+            else -> Unit
+        }
+    }
+
+    fun play(ringtone: Ringtone) {
+        if (ringtone.uri == AudioManager.SILENT && audioManager.isPlaying()) {
+            audioManager.stop()
+            return
+        }
+        audioManager
+            .play(
+                uri = ringtone.uri,
+                volume = 1f,
+                isLooping = true
+            )
+    }
+
+    fun stopEffects() {
+        if (audioManager.isPlaying()) {
+            audioManager.stop()
         }
     }
 

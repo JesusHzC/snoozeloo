@@ -61,12 +61,12 @@ import com.jesushz.snoozeloo.snooze_app.data.model.DayValue
 import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.AlarmNameDialog
 import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.CloseButton
 import com.jesushz.snoozeloo.snooze_app.presentation.setting_alarm.components.SaveButton
-import org.koin.androidx.compose.koinViewModel
 import kotlin.math.min
 
 @Composable
 fun SettingAlarmScreenRoot(
-    viewModel: SettingAlarmViewModel = koinViewModel(),
+    viewModel: SettingAlarmViewModel,
+    onSelectedRingtone: (Ringtone) -> Unit,
     onNavigateBack: () -> Unit,
     onNavigateToAudio: () -> Unit,
 ) {
@@ -77,6 +77,10 @@ fun SettingAlarmScreenRoot(
         when (event) {
             SettingAlarmEvent.OnSuccess -> {
                 onNavigateBack()
+            }
+
+            is SettingAlarmEvent.OnSelectedRingtone -> {
+                onSelectedRingtone(event.ringtone)
             }
         }
     }
