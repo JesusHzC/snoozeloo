@@ -129,6 +129,7 @@ class SettingAlarmViewModel(
                         }
                 )
             }
+            observeHourMinutes()
         }
         SettingAlarmAction.OnSaveClick -> {
             saveAlarm()
