@@ -63,13 +63,14 @@ fun NavigationRoot(
                 LaunchedEffect(selectedAlarm) {
                     selectedAlarm?.let {
                         viewModel.onAction(SettingAlarmAction.OnAlarmSelected(it))
-                    }
+                    } ?: return@LaunchedEffect
                 }
 
                 LaunchedEffect(selectedRingtone) {
                     selectedRingtone?.let {
                         viewModel.onAction(SettingAlarmAction.OnAlarmRingtoneSelected(it))
                     }
+                    selectedAlarmViewModel.onSelectedAlarm(null)
                 }
 
                 SettingAlarmScreenRoot(
